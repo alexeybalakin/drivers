@@ -1,9 +1,10 @@
 package ru.drivers.task;
 
-public class Driver implements Comparable<Driver>{
+
+public final class Driver {
     private String name;
     private PaymentType paymentType;
-    private int paymentRate;
+    private double paymentRate;
     private double monthlyPayment;
 
     public Driver(String name, PaymentType paymentType, int paymentRate) {
@@ -26,24 +27,16 @@ public class Driver implements Comparable<Driver>{
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public PaymentType getPaymentType() {
         return paymentType;
     }
 
-    public void setPaymentType(PaymentType paymentType) {
-        this.paymentType = paymentType;
-    }
-
-    public int getPaymentRate() {
+    public double getPaymentRate() {
         return paymentRate;
     }
 
-    public void setPaymentRate(int paymentRate) {
-        this.paymentRate = paymentRate;
+    public double getMonthlyPayment() {
+        return monthlyPayment;
     }
 
     @Override
@@ -52,14 +45,5 @@ public class Driver implements Comparable<Driver>{
                 "name='" + name + '\'' +
                 ", monthlyPayment=" + monthlyPayment +
                 '}';
-    }
-
-    @Override
-    public int compareTo(Driver driver) {
-        int result = (int)(driver.monthlyPayment - this.monthlyPayment);
-        if (result == 0){
-            result = this.name.compareTo(driver.name);
-        }
-        return result;
     }
 }

@@ -30,23 +30,12 @@ public class Main {
     private static final String FILENAME ="drivers.json";
 
     public static void main(String[] args) {
-        List<Driver> driversForJson = new ArrayList<>();
-        driversForJson.add(new Driver("John Snow", PaymentType.FIXED, 1000));
-        driversForJson.add(new Driver("Ivan Petrov", PaymentType.FIXED, 1000));
-        driversForJson.add(new Driver("Tom Sawyer", PaymentType.FIXED, 500));
-        driversForJson.add(new Driver("Boris Johnson", PaymentType.HOURLY, 5));
-        driversForJson.add(new Driver("Hubert Farnsworth", PaymentType.HOURLY, 8));
-        driversForJson.add(new Driver("Bender Rodriguez", PaymentType.HOURLY, 10));
-        driversForJson.add(new Driver("Philip Fry", PaymentType.FIXED, 500));
-        driversForJson.add(new Driver("Fedor Sumkin", PaymentType.FIXED, 750));
-        driversForJson.add(new Driver("Jhon Smith", PaymentType.HOURLY, 8));
+        List<Driver> driversForJson = getDriversList();
         JsonHelper.jsonWrite(FILENAME, driversForJson);
 
         System.out.println("Reading driver's list from json");
         List<Driver> drivers = JsonHelper.jsonRead(FILENAME);
-        for(Driver driver: drivers){
-            System.out.println(driver);
-        }
+        drivers.stream().forEach(System.out::println);
 
         driverSort(drivers);
 
@@ -76,16 +65,33 @@ public class Main {
                     return;
             }
         }
+    }
 
+    public static List<Driver> getDriversList() {
+        List<Driver> driversForJson = new ArrayList<>();
+        driversForJson.add(new Driver("John Snow", PaymentType.FIXED, 1000));
+        driversForJson.add(new Driver("Ivan Petrov", PaymentType.FIXED, 1000));
+        driversForJson.add(new Driver("Tom Sawyer", PaymentType.FIXED, 500));
+        driversForJson.add(new Driver("Boris Johnson", PaymentType.HOURLY, 5));
+        driversForJson.add(new Driver("Hubert Farnsworth", PaymentType.HOURLY, 8));
+        driversForJson.add(new Driver("Bender Rodriguez", PaymentType.HOURLY, 10));
+        driversForJson.add(new Driver("Philip Fry", PaymentType.FIXED, 500));
+        driversForJson.add(new Driver("Fedor Sumkin", PaymentType.FIXED, 750));
+        driversForJson.add(new Driver("Jhon Smith", PaymentType.HOURLY, 8));
+        return driversForJson;
     }
 
     public static void driverSort(List<Driver> drivers) {
-        Collections.sort(drivers);
+        drivers.sort((d1, d2) -> {
+            int result = (int)(d2.getMonthlyPayment() - d1.getMonthlyPayment());
+            if (result == 0){
+                result = d1.getName().compareTo(d2.getName());
+            }
+            return result;
+        });
         System.out.println();
         System.out.println("Sorted list of drivers");
-        for(Driver driver: drivers){
-            System.out.println(driver);
-        }
+        drivers.stream().forEach(System.out::println);
     }
 
     public static void last3drivers(List<Driver> drivers) {
@@ -122,5 +128,6 @@ public class Main {
 
         drivers.add(new Driver(name, paymentType, paymentRate));
         driverSort(drivers);
+        JsonHelper.jsonWrite(FILENAME, drivers);
     }
 }

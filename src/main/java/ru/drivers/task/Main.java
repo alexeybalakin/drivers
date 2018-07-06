@@ -21,53 +21,73 @@
 
 package ru.drivers.task;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    private static final String FILENAME ="drivers.json";
+    private static final String FILENAME = "drivers.json";
 
     public static void main(String[] args) {
-        List<Driver> driversForJson = getDriversList();
-        JsonHelper.jsonWrite(FILENAME, driversForJson);
-
-        System.out.println("Reading driver's list from json");
-        List<Driver> drivers = JsonHelper.jsonRead(FILENAME);
-        drivers.stream().forEach(System.out::println);
-
-        driverSort(drivers);
-
+        List<Driver> drivers = new ArrayList<>();
         Scanner reader = new Scanner(System.in);
-        while (true){
+        while (true) {
             System.out.println();
             System.out.println("Enter command:");
-            System.out.println("1 - top 5");
-            System.out.println("2 - last 3");
-            System.out.println("3 - new driver");
-            System.out.println("4 - exit");
+            System.out.println("0 - prepare driver list file");
+            System.out.println("1 - load drivers from file");
+            System.out.println("2 - write drivers to file");
+            System.out.println("3 - sort drivers");
+            System.out.println("4 - top 5");
+            System.out.println("5 - last 3");
+            System.out.println("6 - new driver");
+            System.out.println("7 - exit");
             String command = reader.nextLine();
-            if(command.equals("4")){
+            if (command.equals("7")) {
                 break;
             }
-            switch (command){
+            switch (command) {
+                case "0":
+                    System.out.println("Preparing driver's list file");
+                    prepareDriverListFile(FILENAME);
+                    break;
                 case "1":
-                    top5drivers(drivers);
+                    System.out.println("Reading driver's list from json");
+                    drivers = loadDrivers(FILENAME);
+                    drivers.stream().forEach(System.out::println);
                     break;
                 case "2":
-                    last3drivers(drivers);
+                    System.out.println("Writing driver's list to json");
+                    writeDrivers(FILENAME, drivers);
                     break;
                 case "3":
-                    addDriver(drivers, reader);
+                    driverSort(drivers);
                     break;
                 case "4":
+                    top5drivers(drivers);
+                    break;
+                case "5":
+                    last3drivers(drivers);
+                    break;
+                case "6":
+                    addDriver(drivers, reader);
+                    break;
+                case "7":
                     return;
+                default:
+                    System.out.println("Command not recognized");
+                    break;
             }
         }
     }
 
-    public static List<Driver> getDriversList() {
+    public static List<Driver> loadDrivers(String filename) {
+        return JsonHelper.jsonRead(filename);
+    }
+
+    public static void writeDrivers(String filename, List<Driver> drivers) {
+        JsonHelper.jsonWrite(filename, drivers);
+    }
+
+    public static void prepareDriverListFile(String filename) {
         List<Driver> driversForJson = new ArrayList<>();
         driversForJson.add(new Driver("John Snow", PaymentType.FIXED, 1000));
         driversForJson.add(new Driver("Ivan Petrov", PaymentType.FIXED, 1000));
@@ -78,56 +98,45 @@ public class Main {
         driversForJson.add(new Driver("Philip Fry", PaymentType.FIXED, 500));
         driversForJson.add(new Driver("Fedor Sumkin", PaymentType.FIXED, 750));
         driversForJson.add(new Driver("Jhon Smith", PaymentType.HOURLY, 8));
-        return driversForJson;
+        JsonHelper.jsonWrite(filename, driversForJson);
     }
 
     public static void driverSort(List<Driver> drivers) {
-        drivers.sort((d1, d2) -> {
-            int result = (int)(d2.getMonthlyPayment() - d1.getMonthlyPayment());
-            if (result == 0){
-                result = d1.getName().compareTo(d2.getName());
-            }
-            return result;
-        });
+        drivers.sort(Comparator.comparing(Driver::getMonthlyPayment).reversed().thenComparing(Driver::getName));
         System.out.println();
         System.out.println("Sorted list of drivers");
-        drivers.stream().forEach(System.out::println);
+        drivers.forEach(System.out::println);
     }
 
     public static void last3drivers(List<Driver> drivers) {
         System.out.println();
         System.out.println("Last 3 drivers");
-        for(int i = drivers.size()-1; i >drivers.size()-4; i--){
-            System.out.println(drivers.get(i));
-        }
+        drivers.subList(drivers.size()-3, drivers.size()).forEach(System.out::println);
     }
 
     public static void top5drivers(List<Driver> drivers) {
         System.out.println();
         System.out.println("Top 5 drivers");
-        for(int i = 0; i <5; i++){
-            System.out.println(drivers.get(i));
-        }
+        drivers.subList(0,5).forEach(System.out::println);
     }
-    public static void addDriver(List<Driver> drivers, Scanner reader){
+
+    public static void addDriver(List<Driver> drivers, Scanner reader) {
         System.out.print("Input driver's name:");
         String name = reader.nextLine();
 
+        PaymentType paymentType = null;
+        while(paymentType == null) {
         System.out.print("Input payment type (fixed, hourly):");
         String strPaymentType = reader.nextLine();
-        PaymentType paymentType = null;
-        if(strPaymentType.equals("fixed")){
-            paymentType = PaymentType.FIXED;
+            if (strPaymentType.equals("fixed")) {
+                paymentType = PaymentType.FIXED;
+            } else if (strPaymentType.equals("hourly")) {
+                paymentType = PaymentType.HOURLY;
+            }
         }
-        else {
-            paymentType = PaymentType.HOURLY;
-        }
-
         System.out.print("Input payment rate:");
         int paymentRate = Integer.parseInt(reader.nextLine());
 
         drivers.add(new Driver(name, paymentType, paymentRate));
-        driverSort(drivers);
-        JsonHelper.jsonWrite(FILENAME, drivers);
     }
 }

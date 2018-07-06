@@ -1,7 +1,14 @@
 package ru.drivers.task;
 
+import java.util.function.Function;
+
 public enum PaymentType {
-    FIXED, HOURLY
+    FIXED(x -> x),
+    HOURLY(x -> 20.8 * 8 * x);
+
+    PaymentType(Function<Double, Double> monthlyPayment) {
+        this.monthlyPayment = monthlyPayment;
+    }
+
+    Function<Double, Double> monthlyPayment;
 }
-//добавить метод расчета зарплаты в зависимости от типа оплаты
-//лямбда будет передаваться в конструктор

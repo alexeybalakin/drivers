@@ -7,20 +7,11 @@ public final class Driver {
     private double paymentRate;
     private double monthlyPayment;
 
-    public Driver(String name, PaymentType paymentType, int paymentRate) {
+    public Driver(String name, PaymentType paymentType, double paymentRate) {
         this.name = name;
         this.paymentType = paymentType;
         this.paymentRate = paymentRate;
-        setMonthlyPayment(paymentType, paymentRate);
-    }
-
-    private void setMonthlyPayment(PaymentType paymentType, int paymentRate){
-        if(paymentType == PaymentType.FIXED){
-            monthlyPayment = paymentRate;
-        }
-        else {
-            monthlyPayment = 20.8 * 8 * paymentRate;
-        }
+        this.monthlyPayment = paymentType.monthlyPayment.apply(paymentRate);
     }
 
     public String getName() {

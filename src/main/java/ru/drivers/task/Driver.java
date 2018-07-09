@@ -11,7 +11,7 @@ public final class Driver {
         this.name = name;
         this.paymentType = paymentType;
         this.paymentRate = paymentRate;
-        this.monthlyPayment = paymentType.monthlyPayment.apply(paymentRate);
+        this.monthlyPayment = paymentType.getMonthlyPayment().apply(paymentRate);
     }
 
     public String getName() {

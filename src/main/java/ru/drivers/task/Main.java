@@ -32,10 +32,9 @@ public class Main {
         while (true) {
             System.out.println();
             System.out.println("Enter command:");
-            System.out.println("0 - prepare driver list file");
-            System.out.println("1 - load drivers from file");
-            System.out.println("2 - write drivers to file");
-            System.out.println("3 - sort drivers");
+            System.out.println("1 - prepare driver list file");
+            System.out.println("2 - load drivers from file");
+            System.out.println("3 - write drivers to file");
             System.out.println("4 - top 5");
             System.out.println("5 - last 3");
             System.out.println("6 - new driver");
@@ -45,21 +44,19 @@ public class Main {
                 break;
             }
             switch (command) {
-                case "0":
+                case "1":
                     System.out.println("Preparing driver's list file");
                     prepareDriverListFile(FILENAME);
                     break;
-                case "1":
+                case "2":
                     System.out.println("Reading driver's list from json");
                     drivers = loadDrivers(FILENAME);
+                    driverSort(drivers);
                     drivers.stream().forEach(System.out::println);
                     break;
-                case "2":
+                case "3":
                     System.out.println("Writing driver's list to json");
                     writeDrivers(FILENAME, drivers);
-                    break;
-                case "3":
-                    driverSort(drivers);
                     break;
                 case "4":
                     top5drivers(drivers);
@@ -69,6 +66,7 @@ public class Main {
                     break;
                 case "6":
                     addDriver(drivers, reader);
+                    driverSort(drivers);
                     break;
                 case "7":
                     return;
@@ -103,9 +101,6 @@ public class Main {
 
     public static void driverSort(List<Driver> drivers) {
         drivers.sort(Comparator.comparing(Driver::getMonthlyPayment).reversed().thenComparing(Driver::getName));
-        System.out.println();
-        System.out.println("Sorted list of drivers");
-        drivers.forEach(System.out::println);
     }
 
     public static void last3drivers(List<Driver> drivers) {

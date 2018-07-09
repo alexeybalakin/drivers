@@ -10,5 +10,9 @@ public enum PaymentType {
         this.monthlyPayment = monthlyPayment;
     }
 
-    Function<Double, Double> monthlyPayment;
+    private Function<Double, Double> monthlyPayment;
+
+    public Function<Double, Double> getMonthlyPayment() {
+        return monthlyPayment;
+    }
 }

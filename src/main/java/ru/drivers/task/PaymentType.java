@@ -12,7 +12,7 @@ public enum PaymentType {
 
     private Function<Double, Double> monthlyPayment;
 
-    public Function<Double, Double> getMonthlyPayment() {
-        return monthlyPayment;
+    public Double getMonthlyPayment(Double paymentRate) {
+        return this.monthlyPayment.apply(paymentRate);
     }
 }
